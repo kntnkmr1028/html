@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8" />
-<title>マニアさんラジオ配信まだですか？</title>
-<link rel="stylesheet" href="../style.css">
-</head>
-<body>
-<h1>マニアさんラジオ配信まだですか？</h1>
-<div id="elapsed"></div>
-<p />
- <script>
-    // === ここで基準日を設定 ===
-    // "YYYY/MM/DD HH:MM:SS" の形式で指定
-    const startDate = new Date("2025/07/28 00:00:00");
+  <head>
+    <meta charset="UTF-8" />
+    <title>マニアさんラジオ配信まだですか？</title>
+    <link rel="stylesheet" href="https://kntnkmr.f5.si/style.css">
+  </head>
+  <body>
+    <h1>マニアさんラジオ配信まだですか？</h1>
+    <div id="elapsed"></div>
+    <p />
+    <script>
+      // === ここで基準日を設定 ===
+      // "YYYY/MM/DD HH:MM:SS" の形式で指定
+      const startDate = new Date("2025/07/28 00:00:00");
 
-    function updateElapsedTime() {
+      function updateElapsedTime() {
       const now = new Date();
       const diffMs = now - startDate; // ミリ秒差
 
@@ -26,13 +26,13 @@
 
       document.getElementById("elapsed").textContent =
         `マニアがラジオ配信すると言ってから${days}日 ${hours}時間 ${minutes}分 ${seconds}秒が経過しました。早く配信してね!`;
-    }
+      }
 
-    // 初回実行
-    updateElapsedTime();
-    // 1秒ごとに更新
-    setInterval(updateElapsedTime, 1000);
-  </script>
-<a href="https://kntnkmr.f5.si/links">リンク集</a>
-</body>
+     // 初回実行
+      updateElapsedTime();
+      // 1秒ごとに更新
+      setInterval(updateElapsedTime, 1000);
+    </script>
+    <a href="https://kntnkmr.f5.si/links">リンク集</a>
+  </body>
 </html>
