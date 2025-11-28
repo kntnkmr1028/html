@@ -5,7 +5,7 @@ FIND="/usr/bin/find"
 ECHO="/bin/echo"
 
 # 保存先ディレクトリ
-TARGET_DIR="/var/www/html"
+TARGET_DIR="/home/knt/html"
 # 出力ファイル
 OUTPUT_FILE="$TARGET_DIR/sitemap.xml"
 # ベースURL
