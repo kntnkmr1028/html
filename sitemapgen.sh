@@ -9,7 +9,7 @@ TARGET_DIR="/home/knt/html"
 # 出力ファイル
 OUTPUT_FILE="$TARGET_DIR/sitemap.xml"
 # ベースURL
-BASE_URL="https://kntnkmr.f5.si"
+BASE_URL="https://kntnkmr.jp"
 
 # ヘッダを書き込み
 $ECHO '<?xml version="1.0" encoding="UTF-8"?>' > "$OUTPUT_FILE"
