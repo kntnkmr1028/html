@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Guesser</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card: #fff;
+            --text: #1d1d1f;
+            --accent: #0071e3;
+            --border: #d2d2d7;
+            --btn-bg: #e8e8ed;
+            --notch-bg: #000;
+            --notch-screen: #fff;
+            --notch-stroke: rgba(0,0,0,.12);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #000; --card: #1c1c1e; --text: #f5f5f7; --accent: #0a84ff; --border: #38383a; --btn-bg: #2c2c2e; }
+        }
+        .theme-light { --bg: #f5f5f7; --card: #fff; --text: #1d1d1f; --accent: #0071e3; --border: #d2d2d7; --btn-bg: #e8e8ed; --notch-bg: #fff; --notch-screen: #000; --notch-stroke: rgba(0,0,0,.18); }
+        .theme-dark { --bg: #000; --card: #1c1c1e; --text: #f5f5f7; --accent: #0a84ff; --border: #38383a; --btn-bg: #2c2c2e; --notch-bg: #000; --notch-screen: #fff; --notch-stroke: rgba(255,255,255,.12); }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .container { max-width: 500px; width: 100%; }
+        h1 { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 30px; }
+        .section { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,.05); }
+        .section-title { display: block; font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #86868b; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+        #camera-options { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .option.small { grid-column: span 2; }
+        .option.large { grid-column: span 3; }
+
+        @media (max-width: 420px) {
+            #camera-options { grid-template-columns: repeat(3, 1fr); }
+            .option.small { grid-column: span 1; }
+            .option.large { grid-column: span 2; }
+        }
+
+        .option { background: var(--btn-bg); border: 2px solid transparent; border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: .2s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .option.active { border-color: var(--accent); background: rgba(0,113,227,.1); }
+        .option svg { width: 40px; height: 40px; margin-bottom: 8px; fill: none; stroke: var(--text); stroke-width: 1.2; }
+        .label { font-size: 11px; font-weight: 500; }
+
+        #notch-options .option svg { height: 64px; width: auto; }
+        #notch-options .option[data-value="ホームボタン"] svg { height: 84px; }
+
+        .edge-grid { grid-template-columns: 1fr 1fr; }
+        .edge-btn { padding: 15px; font-size: 16px; font-weight: 600; }
+
+        /* テーマ切替ボタン */
+        .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 16px; line-height: 1; }
+        .theme-toggle:hover { box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+
+        .result-list { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; justify-items: center; }
+        .model-card { background: var(--accent); color: #fff; padding: 20px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 15px; min-width: 200px; max-width: 420px; animation: fadeIn .3s; display: flex; flex-direction: column; align-items: center; }
+        .model-card .model-name { margin-bottom: 10px; }
+        .model-card .wiki-link { display: inline-block; margin-top: 6px; color: rgba(255,255,255,.95); background: rgba(255,255,255,.08); padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 13px; }
+
+        .reset-btn { margin-top: 30px; background: none; border: none; color: var(--accent); cursor: pointer; width: 100%; font-size: 14px; }
+    </style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute;left:-9999px;top:-9999px;">
+    <defs>
+        <filter id="inset-shadow">
+            <feGaussianBlur stdDeviation="1" result="blur" />
+            <feOffset dx="0" dy="1" result="offset" />
+            <feComposite operator="out" in="SourceGraphic" in2="blur" result="inverse" />
+            <feFlood flood-color="#000" flood-opacity="0.12" result="color" />
+            <feComposite operator="in" in="color" in2="inverse" result="shadow" />
+            <feComposite operator="over" in="shadow" in2="SourceGraphic" />
+        </filter>
+    </defs>
+</svg>
+<div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <h1 style="margin:0">iPhone Guesser</h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </div>
+
+    <div class="section">
+        <span class="section-title">背面カメラの形状</span>
+        <div class="grid" id="camera-options">
+            <div class="option small" data-type="camera" data-value="斜め2眼">
+                <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.5"/><circle cx="16" cy="16" r="3.5"/></svg>
+                <span class="label">斜め二眼</span>
+            </div>
+            <div class="option small" data-type="camera" data-value="縦2眼">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><circle cx="12" cy="17" r="3.5"/></svg>
+                <span class="label">縦二眼</span>
+            </div>
+            <div class="option small" data-type="camera" data-value="横2眼">
+                <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3.5"/><circle cx="17" cy="12" r="3.5"/></svg>
+                <span class="label">横二眼</span>
+            </div>
+            <div class="option large" data-type="camera" data-value="一眼">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
+                <span class="label">一眼</span>
+            </div>
+            <div class="option large" data-type="camera" data-value="三眼">
+                <svg viewBox="0 0 24 24"><circle cx="17" cy="12" r="3.5"/><circle cx="7" cy="7" r="3.5"/><circle cx="7" cy="17" r="3.5"/></svg>
+                <span class="label">三眼</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <span class="section-title">ディスプレイ上部</span>
+        <div class="grid" id="notch-options">
+            <div class="option" data-type="notch" data-value="Dynamic Island">
+                <svg viewBox="0 0 120 30" width="56" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 -6 A10 10 0 0 0 6 4 L6 42 L114 42 L114 4 A10 10 0 0 0 104 -6 Z" fill="var(--notch-bg)" stroke="none"/>
+                    <rect x="38" y="5" width="44" height="16" rx="10" fill="var(--notch-screen)" stroke="var(--notch-stroke)" stroke-width="1" filter="url(#inset-shadow)" />
+                </svg>
+                <span class="label">Dynamic Island</span>
+            </div>
+            <div class="option" data-type="notch" data-value="ノッチ">
+                <svg viewBox="0 0 120 30" width="56" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 -6 A10 10 0 0 0 6 4 L6 42 L114 42 L114 4 A10 10 0 0 0 104 -6 Z" fill="var(--notch-bg)" stroke="none"/>
+                    <path d="M32 -6 L88 -6 L88 4 Q88 16 84 16 L36 16 Q32 16 32 4 Z" fill="var(--notch-screen)" stroke="var(--notch-stroke)" stroke-width="1" filter="url(#inset-shadow)" />
+                </svg>
+                <span class="label">ノッチ</span>
+            </div>
+            <div class="option" data-type="notch" data-value="ホームボタン">
+                <svg viewBox="0 0 80 135" width="48" height="66" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="72" height="127" rx="10" fill="var(--notch-bg)" stroke="none" />
+                    <rect x="12" y="22" width="56" height="68" rx="6" fill="var(--notch-screen)" stroke="var(--notch-stroke)" stroke-width="0.8" />
+                    <circle cx="40" cy="114" r="7" fill="var(--notch-screen)" stroke="var(--notch-stroke)" stroke-width="0.8" />
+                </svg>
+                <span class="label">ホームボタン</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <span class="section-title">エッジ（側面）の形状</span>
+        <div class="grid edge-grid" id="edge-options">
+            <div class="option edge-btn" data-type="edge" data-value="角">角張っている</div>
+            <div class="option edge-btn" data-type="edge" data-value="丸">丸みを帯びている</div>
+        </div>
+    </div>
+
+    <div class="result-list" id="results"></div>
+    <button class="reset-btn" onclick="resetAll()">すべての選択をクリア</button>
+</div>
+
+<script>
+const models = [
+    { name: "iPhone17ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone17Pro", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone17", camera: "縦2眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone16ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone16Pro", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone16Plus", camera: "縦2眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone16", camera: "縦2眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone16e", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone15ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone15Pro", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone15Plus", camera: "斜め2眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone15", camera: "斜め2眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone14ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone14Pro", camera: "三眼", edge: "角", notch: "Dynamic Island" },
+    { name: "iPhone14Plus", camera: "斜め2眼", edge: "角", notch: "ノッチ" },
+    { name: "iPhone14", camera: "斜め2眼", edge: "角", notch: "ノッチ" },
+    { name: "iPhone13mini", camera: "斜め2眼", edge: "角", notch: "ノッチ" },
+    { name: "iPhone12", camera: "縦2眼", edge: "角", notch: "ノッチ" },
+    { name: "iPhone11", camera: "縦2眼", edge: "丸", notch: "ノッチ" },
+    { name: "iPhoneXR", camera: "一眼", edge: "丸", notch: "ノッチ" },
+    { name: "iPhoneSE3", camera: "一眼", edge: "丸", notch: "ホームボタン" },
+    { name: "iPhone8Plus", camera: "横2眼", edge: "丸", notch: "ホームボタン" },
+    { name: "iPhone7Plus", camera: "横2眼", edge: "丸", notch: "ホームボタン" },
+    { name: "iPhone5s", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone5", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone4s", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone4", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone3Gs", camera: "一眼", edge: "角", notch: "ホームボタン" },
+    { name: "iPhone3G", camera: "一眼", edge: "角", notch: "ホームボタン" }
+];
+
+let filters = { camera: null, notch: null, edge: null };
+
+document.querySelectorAll('.option').forEach(el => {
+    el.addEventListener('click', () => {
+        const type = el.dataset.type;
+        const val = el.dataset.value;
+
+        if (filters[type] === val) {
+            filters[type] = null;
+            el.classList.remove('active');
+        } else {
+            document.querySelectorAll(`.option[data-type="${type}"]`).forEach(opt => opt.classList.remove('active'));
+            filters[type] = val;
+            el.classList.add('active');
+        }
+        render();
+    });
+});
+
+function render() {
+    const resDiv = document.getElementById('results');
+    resDiv.innerHTML = '';
+
+    const filtered = models.filter(m => {
+        return (!filters.camera || m.camera === filters.camera) &&
+               (!filters.notch || m.notch === filters.notch) &&
+               (!filters.edge || m.edge === filters.edge);
+    });
+
+    function articleFromModel(name) {
+        let s = name.replace(/ProMax$/i, 'Pro').replace(/([a-zA-Z])(?=[0-9])/g, '$1_').replace(/([0-9])(?=[A-Z])/g, '$1_').replace(/([a-z])([A-Z])/g, '$1_$2');
+        return s.charAt(0).toUpperCase() + s.slice(1).replace(/^I_/, 'I');
+    }
+
+    filtered.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'model-card';
+
+        const title = document.createElement('div');
+        title.className = 'model-name';
+        title.textContent = m.name;
+
+        const article = articleFromModel(m.name);
+        const link = document.createElement('a');
+        link.className = 'wiki-link';
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.href = 'https://ja.wikipedia.org/wiki/' + encodeURIComponent(article);
+        link.textContent = 'Wikipedia';
+
+        card.appendChild(title);
+        card.appendChild(link);
+        resDiv.appendChild(card);
+    });
+}
+
+function resetAll() {
+    filters = { camera: null, notch: null, edge: null };
+    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('active'));
+    render();
+}
+// テーマ初期化（ボタンで明示的に切替）
+(function(){
+    const btn = document.getElementById('theme-toggle');
+    function applyTheme(theme){
+        document.documentElement.classList.remove('theme-light','theme-dark');
+        document.documentElement.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+        if(btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+    let theme = localStorage.getItem('theme') || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(theme);
+    if(btn) btn.addEventListener('click', () => {
+        theme = document.documentElement.classList.contains('theme-dark') ? 'light' : 'dark';
+        applyTheme(theme);
+        localStorage.setItem('theme', theme);
+    });
+})();
+
+render();
+</script>
+</body>
+</html>
