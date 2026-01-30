@@ -1,114 +1,48 @@
-<!DOCTYPE html>
-<html lang="ja">
+<!DOCTYPE html><html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iPhone Guesser</title>
-    <style>
-        :root {
-            --bg: #f5f5f7;
-            --card: #fff;
-            --text: #1d1d1f;
-            --accent: #0071e3;
-            --border: #d2d2d7;
-            --btn-bg: #e8e8ed;
-            --notch-bg: #000;
-            --notch-screen: #fff;
-            --notch-stroke: rgba(0,0,0,.12);
-        }
-        @media (prefers-color-scheme: dark) {
-            :root { --bg: #000; --card: #1c1c1e; --text: #f5f5f7; --accent: #0a84ff; --border: #38383a; --btn-bg: #2c2c2e; }
-        }
-        .theme-light { --bg: #f5f5f7; --card: #fff; --text: #1d1d1f; --accent: #0071e3; --border: #d2d2d7; --btn-bg: #e8e8ed; --notch-bg: #fff; --notch-screen: #000; --notch-stroke: rgba(0,0,0,.18); }
-        .theme-dark { --bg: #000; --card: #1c1c1e; --text: #f5f5f7; --accent: #0a84ff; --border: #38383a; --btn-bg: #2c2c2e; --notch-bg: #000; --notch-screen: #fff; --notch-stroke: rgba(255,255,255,.12); }
-
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-
-        .container { max-width: 500px; width: 100%; }
-        h1 { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 30px; }
-        .section { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,.05); }
-        .section-title { display: block; font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #86868b; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-
-        #camera-options { grid-template-columns: repeat(6, 1fr); gap: 12px; }
-        .option.small { grid-column: span 2; }
-        .option.large { grid-column: span 3; }
-
-        @media (max-width: 420px) {
-            #camera-options { grid-template-columns: repeat(3, 1fr); }
-            .option.small { grid-column: span 1; }
-            .option.large { grid-column: span 2; }
-        }
-
-        .option { background: var(--btn-bg); border: 2px solid transparent; border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: .2s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .option.active { border-color: var(--accent); background: rgba(0,113,227,.1); }
-        .option svg { width: 40px; height: 40px; margin-bottom: 8px; fill: none; stroke: var(--text); stroke-width: 1.2; }
-        .label { font-size: 11px; font-weight: 500; }
-
-        #notch-options .option svg { height: 64px; width: auto; }
-        #notch-options .option[data-value="ホームボタン"] svg { height: 84px; }
-
-        .edge-grid { grid-template-columns: 1fr 1fr; }
-        .edge-btn { padding: 15px; font-size: 16px; font-weight: 600; }
-
-        /* テーマ切替ボタン */
-        .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 16px; line-height: 1; }
-        .theme-toggle:hover { box-shadow: 0 2px 6px rgba(0,0,0,.08); }
-
-        .result-list { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; justify-items: center; }
-        .model-card { background: var(--accent); color: #fff; padding: 20px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 15px; min-width: 200px; max-width: 420px; animation: fadeIn .3s; display: flex; flex-direction: column; align-items: center; }
-        .model-card .model-name { margin-bottom: 10px; }
-        .model-card .wiki-link { display: inline-block; margin-top: 6px; color: rgba(255,255,255,.95); background: rgba(255,255,255,.08); padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 13px; }
-
-        .reset-btn { margin-top: 30px; background: none; border: none; color: var(--accent); cursor: pointer; width: 100%; font-size: 14px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
+
+
 <body>
-<svg width="0" height="0" style="position:absolute;left:-9999px;top:-9999px;">
-    <defs>
-        <filter id="inset-shadow">
-            <feGaussianBlur stdDeviation="1" result="blur" />
-            <feOffset dx="0" dy="1" result="offset" />
-            <feComposite operator="out" in="SourceGraphic" in2="blur" result="inverse" />
-            <feFlood flood-color="#000" flood-opacity="0.12" result="color" />
-            <feComposite operator="in" in="color" in2="inverse" result="shadow" />
-            <feComposite operator="over" in="shadow" in2="SourceGraphic" />
-        </filter>
-    </defs>
-</svg>
+    <svg width="0" height="0" style="position:absolute;left:-9999px;top:-9999px;"><defs><filter id="inset-shadow"><feGaussianBlur stdDeviation="1" result="blur"/><feOffset dx="0" dy="1" result="offset"/><feComposite operator="out" in="SourceGraphic" in2="blur" result="inverse"/><feFlood flood-color="#000" flood-opacity="0.12" result="color"/><feComposite operator="in" in="color" in2="inverse" result="shadow"/><feComposite operator="over" in="shadow" in2="SourceGraphic"/></filter></defs></svg>
 <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><!--タイトルとテーマボタン-->
         <h1 style="margin:0">iPhone Guesser</h1>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button> <!--テーマ切り替えボタン-->
     </div>
 
-    <div class="section">
+    <div class="section"> <!--背面カメラ-->
         <span class="section-title">背面カメラの形状</span>
         <div class="grid" id="camera-options">
             <div class="option small" data-type="camera" data-value="斜め2眼">
-                <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.5"/><circle cx="16" cy="16" r="3.5"/></svg>
-                <span class="label">斜め二眼</span>
+                    <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.5"/><circle cx="16" cy="16" r="3.5"/></svg>
+                    <span class="label">斜め二眼</span>
             </div>
             <div class="option small" data-type="camera" data-value="縦2眼">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><circle cx="12" cy="17" r="3.5"/></svg>
-                <span class="label">縦二眼</span>
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><circle cx="12" cy="17" r="3.5"/></svg>
+                    <span class="label">縦二眼</span>
             </div>
             <div class="option small" data-type="camera" data-value="横2眼">
-                <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3.5"/><circle cx="17" cy="12" r="3.5"/></svg>
-                <span class="label">横二眼</span>
+                    <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3.5"/><circle cx="17" cy="12" r="3.5"/></svg>
+                    <span class="label">横二眼</span>
             </div>
             <div class="option large" data-type="camera" data-value="一眼">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
-                <span class="label">一眼</span>
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
+                    <span class="label">一眼</span>
             </div>
             <div class="option large" data-type="camera" data-value="三眼">
-                <svg viewBox="0 0 24 24"><circle cx="17" cy="12" r="3.5"/><circle cx="7" cy="7" r="3.5"/><circle cx="7" cy="17" r="3.5"/></svg>
-                <span class="label">三眼</span>
+                    <svg viewBox="0 0 24 24"><circle cx="17" cy="12" r="3.5"/><circle cx="7" cy="7" r="3.5"/>
+                    <circle cx="7" cy="17" r="3.5"/></svg>
+                    <span class="label">三眼</span>
             </div>
         </div>
     </div>
 
-    <div class="section">
+    <div class="section"> <!--ディスプレイ-->
         <span class="section-title">ディスプレイ上部</span>
         <div class="grid" id="notch-options">
             <div class="option" data-type="notch" data-value="Dynamic Island">
@@ -136,147 +70,47 @@
         </div>
     </div>
 
-    <div class="section">
-        <span class="section-title">エッジ（側面）の形状</span>
-        <div class="grid edge-grid" id="edge-options">
-            <div class="option edge-btn" data-type="edge" data-value="角">角張っている</div>
-            <div class="option edge-btn" data-type="edge" data-value="丸">丸みを帯びている</div>
+    <div class="section"><!--その他-->
+        <span class="section-title">その他の設定</span>
+        <div class="modal-subsection"> <!--画面サイズ-->
+            <button class="subsection-btn" data-subsection="screen-size">
+                <span class="arrow">▼</span>
+                <span>画面サイズ</span>
+            </button>
+            <div class="subsection-content" id="screen-size-content">
+                <div class="grid" id="screen-size-options">
+                    <div class="option" data-type="screen-size" data-inch="3.5"><span class="label">3.5</span></div>
+                    <div class="option" data-type="screen-size" data-inch="4"><span class="label">4</span></div>
+                    <div class="option" data-type="screen-size" data-inch="4.7"><span class="label">4.7</span></div>
+                    <div class="option" data-type="screen-size" data-inch="5.4"><span class="label">5.4</span></div>
+                    <div class="option" data-type="screen-size" data-inch="5.5"><span class="label">5.5</span></div>
+                    <div class="option" data-type="screen-size" data-inch="5.8"><span class="label">5.8</span></div>
+                    <div class="option" data-type="screen-size" data-inch="6.1"><span class="label">6.1</span></div>
+                    <div class="option" data-type="screen-size" data-inch="6.5"><span class="label">6.5</span></div>
+                    <div class="option" data-type="screen-size" data-inch="6.7"><span class="label">6.7</span></div>
+                    <div class="option" data-type="screen-size" data-inch="6.9"><span class="label">6.9</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-subsection"> <!--エッジ-->
+            <button class="subsection-btn" data-subsection="edge">
+                <span class="arrow">▼</span>
+                <span>エッジ（側面）の形状</span>
+            </button>
+            <div class="subsection-content" id="edge-content">
+                <div class="grid edge-grid" id="edge-options">
+                    <div class="option edge-btn" data-type="edge" data-value="角">角張っている</div>
+                    <div class="option edge-btn" data-type="edge" data-value="丸">丸みを帯びている</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="result-list" id="results"></div>
+    <div class="result-list" id="results"></div> <!--リザルト-->
     <button class="reset-btn" onclick="resetAll()">すべての選択をクリア</button>
 </div>
-
-<script>
-const models = [
-    { name: "iPhone17ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island",wp:"https://w.wiki/Hd6S" },
-    { name: "iPhone17Pro", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6S" },
-    { name: "iPhone17", camera: "縦2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6V" },
-    { name: "iPhoneAir", camera: "一眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6a" },
-    { name: "iPhone16ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6c" },
-    { name: "iPhone16Pro", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6c" },
-    { name: "iPhone16Plus", camera: "縦2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6o" },
-    { name: "iPhone16", camera: "縦2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6o" },
-    { name: "iPhone16e", camera: "一眼", edge: "角", notch: "ノッチ",wp:"https://w.wiki/Hd6t" },
-    { name: "iPhone15ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/7cxh" },
-    { name: "iPhone15Pro", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/7cxh"},
-    { name: "iPhone15Plus", camera: "斜め2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6x" },
-    { name: "iPhone15", camera: "斜め2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6x" },
-    { name: "iPhone14ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd72" },
-    { name: "iPhone14Pro", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd72" },
-    { name: "iPhone14Plus", camera: "斜め2眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd74" },
-    { name: "iPhone14", camera: "斜め2眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd74" },
-    { name: "iPhone13ProMax", camera: "三眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd77" },
-    { name: "iPhone13Pro", camera: "三眼", edge: "角", notch: "ノッチ",wp:"https://w.wiki/Hd77" },
-    { name: "iPhone13", camera: "斜め2眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd79" },
-    { name: "iPhone13mini", camera: "斜め2眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd79" },
-    { name: "iPhone12ProMax", camera: "三眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd7B" },
-    { name: "iPhone12Pro", camera: "三眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Hd7B" },
-    { name: "iPhone12", camera: "縦2眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/5Erg"},
-    { name: "iPhone12mini", camera: "縦2眼", edge: "角", notch: "ノッチ",wp:"https://w.wiki/5Erg" },
-    { name: "iPhone11ProMax", camera: "三眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/5Erg" },
-    { name: "iPhone11Pro", camera: "三眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/5Erg" },
-    { name: "iPhone11", camera: "縦2眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/Hd7J" },
-    { name: "iPhoneXsMax", camera: "縦2眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/Hd7K" },
-    { name: "iPhoneXs", camera: "縦2眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/Hd7K" },
-    { name: "iPhoneX", camera: "縦2眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/47Mi" },
-    { name: "iPhoneXR", camera: "一眼", edge: "丸", notch: "ノッチ", wp:"https://w.wiki/Hd7Q" },
-    { name: "iPhone8Plus", camera: "横2眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/Hd7t" },
-    { name: "iPhone8", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/3GiT" },
-    { name: "iPhone7Plus", camera: "横2眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/47E$" },
-    { name: "iPhone7", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/3J3t" },
-    { name: "iPhone6sPlus", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/Hd7w" },
-    { name: "iPhone6s", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/3Eo$" },
-    { name: "iPhone6Plus", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/Hd7z" },
-    { name: "iPhone6", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/3HKa" },
-    { name: "iPhoneSE3", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/5Sm9" },
-    { name: "iPhoneSE2", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/4kqv" },
-    { name: "iPhoneSE", camera: "一眼", edge: "角", notch: "ホームボタン", wp:"https://w.wiki/5AC7" },
-    { name: "iPhone5c", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/44te"},
-    { name: "iPhone5s", camera: "一眼", edge: "角", notch: "ホームボタン", wp:"https://w.wiki/43rV" },
-    { name: "iPhone5", camera: "一眼", edge: "角", notch: "ホームボタン", wp:"https://w.wiki/Hd85" },
-    { name: "iPhone4s", camera: "一眼", edge: "角", notch: "ホームボタン", wp:"https://w.wiki/4ZNr" },
-    { name: "iPhone4", camera: "一眼", edge: "角", notch: "ホームボタン", wp:"https://w.wiki/5E8H" },
-    { name: "iPhone3Gs", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/5E8D" },
-    { name: "iPhone3G", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/Hd88" },
-    { name: "iPhone", camera: "一眼", edge: "丸", notch: "ホームボタン", wp:"https://w.wiki/4Jzj" }
-];
-
-let filters = { camera: null, notch: null, edge: null };
-
-document.querySelectorAll('.option').forEach(el => {
-    el.addEventListener('click', () => {
-        const type = el.dataset.type;
-        const val = el.dataset.value;
-
-        if (filters[type] === val) {
-            filters[type] = null;
-            el.classList.remove('active');
-        } else {
-            document.querySelectorAll(`.option[data-type="${type}"]`).forEach(opt => opt.classList.remove('active'));
-            filters[type] = val;
-            el.classList.add('active');
-        }
-        render();
-    });
-});
-
-function render() {
-    const resDiv = document.getElementById('results');
-    resDiv.innerHTML = '';
-
-    const filtered = models.filter(m => {
-        return (!filters.camera || m.camera === filters.camera) &&
-               (!filters.notch || m.notch === filters.notch) &&
-               (!filters.edge || m.edge === filters.edge);
-    });
-
-    filtered.forEach(m => {
-        const card = document.createElement('div');
-        card.className = 'model-card';
-
-        const title = document.createElement('div');
-        title.className = 'model-name';
-        title.textContent = m.name;
-
-        const link = document.createElement('a');
-        link.className = 'wiki-link';
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.href = m.wp;
-        link.textContent = 'Wikipedia';
-
-        card.appendChild(title);
-        card.appendChild(link);
-        resDiv.appendChild(card);
-    });
-}
-
-function resetAll() {
-    filters = { camera: null, notch: null, edge: null };
-    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('active'));
-    render();
-}
-// テーマ初期化（ボタンで明示的に切替）
-(function(){
-    const btn = document.getElementById('theme-toggle');
-    function applyTheme(theme){
-        document.documentElement.classList.remove('theme-light','theme-dark');
-        document.documentElement.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
-        if(btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-    }
-    let theme = localStorage.getItem('theme') || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(theme);
-    if(btn) btn.addEventListener('click', () => {
-        theme = document.documentElement.classList.contains('theme-dark') ? 'light' : 'dark';
-        applyTheme(theme);
-        localStorage.setItem('theme', theme);
-    });
-})();
-
-render();
-</script>
+<script src="script.js"></script>
 <script src="https://counter.nanasi-rasi.net/counter.js"></script>
 </body>
 </html>
