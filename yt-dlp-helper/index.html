@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>yt-dlp Command Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>:root{--bg:#0a0c12;--surface:#11131a;--border:#2a2f3f;--accent:#7fff6e;--accent2:#ff6e7f;--accent3:#6eb3ff;--text:#f4f6ff;--muted:#b4b8d6;--tag-bg:#1a1f2b;--accent-contrast:#0a0c12;--grid-line:rgba(127,255,110,.05);--flag-color:#ffd97f}[data-theme=light]{--bg:#f7f8fb;--surface:#fff;--border:#d6dbe6;--accent:#0b7a34;--accent2:#c7384f;--accent3:#1f5fd2;--text:#101318;--muted:#4c5566;--tag-bg:#eef1f6;--accent-contrast:#fff;--grid-line:rgba(16,19,24,.08);--flag-color:#7a4e00}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:Syne,sans-serif;min-height:100vh;padding:0}body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}.container{max-width:1100px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1}header{display:flex;align-items:flex-end;gap:20px;margin-bottom:48px;padding-bottom:24px;border-bottom:1px solid var(--border)}.header-actions{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:10px}.logo{font-size:14px;font-family:JetBrains Mono,monospace;color:var(--accent);background:rgba(127,255,110,.08);border:1px solid rgba(127,255,110,.2);padding:4px 10px;border-radius:4px;letter-spacing:2px;text-transform:uppercase}h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1;letter-spacing:-2px;color:var(--text)}h1 span{color:var(--accent)}.subtitle{font-size:12px;color:var(--muted);font-family:JetBrains Mono,monospace;text-align:right;line-height:1.6}.theme-toggle{background:var(--tag-bg);border:1px solid var(--border);color:var(--text);font-family:JetBrains Mono,monospace;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:1px}.theme-toggle:hover{border-color:var(--accent3);color:var(--accent3)}.command-box{background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:20px 24px;margin-bottom:40px;position:relative;overflow:hidden}.command-box::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(127,255,110,.05) 0%,transparent 60%);pointer-events:none}.command-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-family:JetBrains Mono,monospace;margin-bottom:10px}.command-text{font-family:JetBrains Mono,monospace;font-size:13px;color:var(--accent);word-break:break-all;line-height:1.7;min-height:22px}.command-edit{width:100%;background:transparent;border:0;color:inherit;outline:0;resize:none;padding:0}.command-actions{position:absolute;top:16px;right:16px;display:flex;gap:8px}.sync-btn,.copy-btn{font-family:JetBrains Mono,monospace;font-size:11px;padding:6px 12px;border-radius:4px;cursor:pointer;transition:all .2s;letter-spacing:1px}.sync-btn{background:rgba(110,179,255,.1);border:1px solid rgba(110,179,255,.3);color:var(--accent3)}.sync-btn:hover{background:rgba(110,179,255,.2);border-color:var(--accent3)}.sync-btn:disabled{opacity:.5;cursor:default}.sync-btn:disabled:hover{background:rgba(110,179,255,.1);border-color:rgba(110,179,255,.3)}.copy-btn{background:rgba(127,255,110,.1);border:1px solid rgba(127,255,110,.3);color:var(--accent)}.copy-btn:hover{background:rgba(127,255,110,.2);border-color:var(--accent)}.copy-btn.copied{color:var(--accent-contrast);background:var(--accent);border-color:var(--accent)}.url-section{margin-bottom:36px}.section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:JetBrains Mono,monospace;margin-bottom:12px;display:flex;align-items:center;gap:8px}.section-title::after{content:'';flex:1;height:1px;background:var(--border)}.url-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:JetBrains Mono,monospace;font-size:13px;padding:12px 16px;border-radius:6px;outline:0;transition:border-color .2s}.url-input:focus{border-color:var(--accent3)}.url-input::placeholder{color:var(--muted)}.options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:36px}.option-group{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}.option-group.has-active{border-color:rgba(127,255,110,.3)}.group-header{padding:12px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:JetBrains Mono,monospace}.option-list{padding:8px}.option-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:5px;cursor:pointer;transition:background .15s;user-select:none}.option-item:hover{background:rgba(255,255,255,.04)}.option-item.active{background:rgba(127,255,110,.07)}.option-check{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:10px}.option-item.active .option-check{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast)}.option-info{flex:1}.option-flag{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--flag-color);margin-bottom:2px;display:block}.option-desc{font-size:11px;color:var(--muted);line-height:1.4}.option-input{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:5px}.option-input input,.option-input select{background:var(--tag-bg);border:1px solid var(--border);color:var(--text);font-family:JetBrains Mono,monospace;font-size:11px;padding:4px 8px;border-radius:4px;outline:0;flex:1;min-width:0;transition:border-color .2s}.option-input input:focus,.option-input select:focus{border-color:var(--accent3)}.option-input select option{background:var(--surface)}.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px}.preset-btn{background:var(--tag-bg);border:1px solid var(--border);color:var(--muted);font-family:JetBrains Mono,monospace;font-size:11px;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all .2s;letter-spacing:1px}.preset-btn:hover{border-color:var(--accent3);color:var(--accent3);background:rgba(110,179,255,.06)}.preset-btn.active-preset{border-color:var(--accent);color:var(--accent);background:rgba(127,255,110,.08)}.reset-btn{margin-left:auto;background:0;border:1px solid rgba(255,110,127,.3);color:var(--accent2);font-family:JetBrains Mono,monospace;font-size:11px;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all .2s}.reset-btn:hover{background:rgba(255,110,127,.1);border-color:var(--accent2)}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}</style>
+</head>
+<body>
+<div class="container"><header><div><div class="logo">yt-dlp</div></div><h1>Command<br><span>Builder</span></h1><div class="header-actions"><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark</button><div class="subtitle">クリックで<br>ワンライナー生成</div></div></header><div class="command-box"><div class="command-label">▶ generated command</div><textarea class="command-text command-edit" id="commandOutput" rows="2" spellcheck="false" onfocus="handleCommandFocus()" onblur="handleCommandBlur()" oninput="handleCommandInput()">yt-dlp [URL]</textarea><div class="command-actions"><button class="sync-btn" id="syncBtn" onclick="useGenerated()" disabled>UI反映</button><button class="copy-btn" id="copyBtn" onclick="copyCommand()">COPY</button></div></div><div class="url-section"><div class="section-title">URL</div><input type="text" class="url-input" id="urlInput" placeholder="https://www.youtube.com/watch?v=..." oninput="updateCommand()"></div><div class="section-title">プリセット</div><div class="presets"><button class="preset-btn" onclick="applyPreset('mp3')">🎵 MP3</button><button class="preset-btn" onclick="applyPreset('aac')">🎵 AAC</button><button class="preset-btn" onclick="applyPreset('mp4')">🎬 MP4</button><button class="preset-btn" onclick="applyPreset('mkv')">🎬 MKV</button><button class="preset-btn" onclick="applyPreset('playlist')">📋 プレイリスト</button><button class="preset-btn" onclick="applyPreset('subs')">💬 字幕付き</button><button class="reset-btn" onclick="resetAll()">✕ リセット</button></div><div class="section-title" style="margin-bottom:16px">オプション</div><div class="options-grid" id="optionsGrid"></div></div>
+
+<script>const OPTIONS = [
+  {
+    group: "📋 プレイリスト",
+    items: [
+      { type: "checkbox", label: "プレイリストのみ", flag: "--yes-playlist", desc: "URLがプレイリストを参照する場合ダウンロード" },
+      { type: "checkbox", label: "動画のみ", flag: "--no-playlist", desc: "プレイリスト内の動画のみダウンロード" },
+      { type: "input", label: "アイテム指定", flag: "-I", desc: "例: 1:3,7,-5::2", placeholder: "1:10" },
+      { type: "input", label: "最大ダウンロード数", flag: "--max-downloads", desc: "ダウンロードするファイル数の上限", placeholder: "10" },
+      { type: "input", label: "アーカイブファイル", flag: "--download-archive", desc: "ダウンロード済みIDを記録するファイル", placeholder: "archive.txt" },
+      { type: "checkbox", label: "既存ファイルで停止", flag: "--break-on-existing", desc: "アーカイブ内のファイルに遭遇したら停止" },
+      { type: "checkbox", label: "ランダム順", flag: "--playlist-random", desc: "プレイリストをランダム順でダウンロード" },
+    ]
+  },
+  {
+    group: "📊 出力・情報",
+    items: [
+      { type: "checkbox", label: "シミュレーション", flag: "-s", desc: "ダウンロードせずに動作確認" },
+      { type: "checkbox", label: "クワイエットモード", flag: "-q", desc: "出力を抑制" },
+      { type: "checkbox", label: "詳細出力", flag: "-v", desc: "デバッグ情報を表示" },
+      { type: "checkbox", label: "エラー無視", flag: "-i", desc: "ダウンロードエラーを無視して続行" },
+      { type: "checkbox", label: "進行状況を改行表示", flag: "--newline", desc: "プログレスバーを新しい行で出力" },
+      { type: "checkbox", label: "コンソールタイトル", flag: "--console-title", desc: "進行状況をコンソールタイトルバーに表示" },
+    ]
+  },
+  {
+    group: "🌐 ネットワーク",
+    items: [
+      { type: "input", label: "プロキシ", flag: "--proxy", desc: "HTTP/HTTPS/SOCKSプロキシURL", placeholder: "socks5://127.0.0.1:1080/" },
+      { type: "input", label: "接続タイムアウト (秒)", flag: "--socket-timeout", desc: "タイムアウトまでの秒数", placeholder: "30" },
+      { type: "select", label: "ブラウザに偽装", flag: "--impersonate", desc: "リクエストを偽装するクライアント", options: ["chrome", "chrome-110", "firefox", "safari", "edge"] },
+      { type: "checkbox", label: "IPv4を強制", flag: "-4", desc: "すべての接続をIPv4で行う" },
+      { type: "checkbox", label: "IPv6を強制", flag: "-6", desc: "すべての接続をIPv6で行う" },
+    ]
+  },
+  {
+    group: "⚡ ダウンロード",
+    items: [
+      { type: "input", label: "同時ダウンロード数", flag: "-N", desc: "並列ダウンロードのフラグメント数", placeholder: "4" },
+      { type: "input", label: "リトライ回数", flag: "-R", desc: "リトライ回数 (デフォルト: 10)", placeholder: "10" },
+      { type: "input", label: "レート制限", flag: "-r", desc: "最大ダウンロード速度", placeholder: "4.2M" },
+      { type: "select", label: "外部ダウンローダー", flag: "--downloader", desc: "外部ダウンローダーを使用", options: ["aria2c", "wget", "curl", "axel", "ffmpeg"] },
+    ]
+  },
+  {
+    group: "🎞️ フォーマット",
+    items: [
+      { type: "select", label: "フォーマット指定", flag: "-f", desc: "動画フォーマットを選択", options: ["best", "bestvideo+bestaudio", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]", "worst", "1080p (mp4): bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]", "720p (mp4): bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]", "480p: bestvideo[height<=480]+bestaudio"], raw: true },
+      { type: "select", label: "動画コンテナ", flag: "--merge-output-format", desc: "マージ出力フォーマット", options: ["mp4", "mkv", "webm", "mov", "avi"] },
+      { type: "select", label: "ソート基準", flag: "-S", desc: "フォーマットのソート順", options: ["res,fps,codec", "res,codec:h264", "+size,+br,+res,+fps", "res,fps,hdr:12"], raw: true },
+      { type: "checkbox", label: "最高品質", flag: "--format-sort-force", desc: "ユーザー指定のソート順を優先" },
+      { type: "checkbox", label: "フォーマット一覧表示", flag: "-F", desc: "利用可能なフォーマットを一覧表示" },
+    ]
+  },
+  {
+    group: "🧰 後処理",
+    items: [
+      { type: "checkbox", label: "音声のみ抽出", flag: "-x", desc: "動画から音声を抽出 (ffmpeg必要)" },
+      { type: "select", label: "音声形式", flag: "--audio-format", desc: "音声変換形式", options: ["mp3", "aac", "flac", "m4a", "opus", "vorbis", "wav"] },
+      { type: "checkbox", label: "字幕を埋め込む", flag: "--embed-subs", desc: "字幕を動画ファイルに埋め込む" },
+      { type: "checkbox", label: "サムネイルを埋め込む", flag: "--embed-thumbnail", desc: "サムネイルをカバーアートとして埋め込む" },
+      { type: "checkbox", label: "メタデータを埋め込む", flag: "--embed-metadata", desc: "メタデータを動画ファイルに埋め込む" },
+    ]
+  },
+  {
+    group: "🔐 認証",
+    items: [
+      { type: "input", label: "ユーザー名", flag: "-u", desc: "ログインアカウントID", placeholder: "user@example.com" },
+      { type: "input", label: "パスワード", flag: "-p", desc: "アカウントパスワード", placeholder: "password" },
+      { type: "checkbox", label: ".netrc使用", flag: "-n", desc: ".netrc認証データを使用" },
+      { type: "input", label: "Cookieファイル", flag: "--cookies", desc: "Netscape形式のCookieファイル", placeholder: "cookies.txt" },
+      { type: "select", label: "ブラウザのCookie", flag: "--cookies-from-browser", desc: "ブラウザからCookieを読み込む", options: ["chrome", "firefox", "edge", "safari", "brave", "opera"] },
+    ]
+  },
+  {
+    group: "📂 ファイル保存",
+    items: [
+      { type: "input", label: "保存先パス", flag: "-P", desc: "保存先フォルダ", placeholder: "~/Downloads" },
+      { type: "input", label: "ファイル名テンプレート", flag: "-o", desc: "出力ファイル名テンプレート", placeholder: "%(title)s.%(ext)s" },
+      { type: "checkbox", label: "上書きしない", flag: "-w", desc: "既存ファイルを上書きしない" },
+      { type: "checkbox", label: "ファイル名をASCIIに制限", flag: "--restrict-filenames", desc: "ASCII文字のみのファイル名" },
+    ]
+  },
+  {
+    group: "💬 字幕",
+    items: [
+      { type: "checkbox", label: "字幕をダウンロード", flag: "--write-subs", desc: "字幕ファイルをダウンロード" },
+      { type: "checkbox", label: "自動生成字幕", flag: "--write-auto-subs", desc: "自動生成字幕をダウンロード" },
+      { type: "input", label: "字幕言語", flag: "--sub-langs", desc: "例: ja,en / all", placeholder: "ja" },
+      { type: "select", label: "字幕形式", flag: "--sub-format", desc: "字幕のフォーマット", options: ["srt", "ass", "vtt", "lrc"] },
+    ]
+  },
+  {
+    group: "✂️ SponsorBlock",
+    items: [
+      { type: "checkbox", label: "スポンサーをスキップ", flag: "--sponsorblock-remove sponsor", desc: "スポンサーセグメントを削除", raw: true },
+      { type: "checkbox", label: "イントロをスキップ", flag: "--sponsorblock-remove intro", desc: "イントロセグメントを削除", raw: true },
+      { type: "checkbox", label: "アウトロをスキップ", flag: "--sponsorblock-remove outro", desc: "アウトロセグメントを削除", raw: true },
+      { type: "checkbox", label: "全セグメント削除", flag: "--sponsorblock-remove all,-filler", desc: "fillerを除くすべてのセグメントを削除", raw: true },
+    ]
+  },
+  {
+    group: "📅 フィルター",
+    items: [
+      { type: "input", label: "日付 (以降)", flag: "--dateafter", desc: "指定日以降にアップロードされた動画", placeholder: "20230101" },
+      { type: "input", label: "日付 (以前)", flag: "--datebefore", desc: "指定日以前にアップロードされた動画", placeholder: "20231231" },
+      { type: "input", label: "最小ファイルサイズ", flag: "--min-filesize", desc: "このサイズより小さいファイルはスキップ", placeholder: "1M" },
+      { type: "input", label: "最大ファイルサイズ", flag: "--max-filesize", desc: "このサイズより大きいファイルはスキップ", placeholder: "500M" },
+      { type: "input", label: "年齢制限", flag: "--age-limit", desc: "指定年齢以下の動画のみダウンロード", placeholder: "18" },
+    ]
+  },
+  {
+    group: "🖼️ サムネイル/メタデータ",
+    items: [
+      { type: "checkbox", label: "サムネイル保存", flag: "--write-thumbnail", desc: "サムネイル画像をディスクに保存" },
+      { type: "checkbox", label: "info.json保存", flag: "--write-info-json", desc: "動画メタデータをJSONファイルに保存" },
+      { type: "checkbox", label: "説明文を保存", flag: "--write-description", desc: "動画説明文をファイルに保存" },
+    ]
+  },
+];
+
+const PRESETS = {
+  mp3: { "-x": true, "--audio-format": "mp3" },
+  aac: { "-x": true, "--audio-format": "aac" },
+  mp4: { "--merge-output-format": "mp4", "-S": "vcodec:h264,lang,quality,res,fps,hdr:12,acodec:aac" },
+  mkv: { "--merge-output-format": "mkv" },
+  playlist: { "--yes-playlist": true, "-I": "", "--download-archive": "archive.txt" },
+  subs: { "--write-subs": true, "--write-auto-subs": true, "--sub-langs": "ja", "--embed-subs": true },
+};
+
+let state = {};
+let isEditingCommand = false;
+let manualOverride = false;
+const THEME_KEY = "yt-dlp-theme";
+
+function handleCommandFocus() {
+  isEditingCommand = true;
+}
+
+function handleCommandBlur() {
+  isEditingCommand = false;
+}
+
+function handleCommandInput() {
+  manualOverride = true;
+  updateSyncButton();
+}
+
+function updateSyncButton() {
+  const btn = document.getElementById("syncBtn");
+  if (!btn) return;
+  btn.disabled = !manualOverride;
+}
+
+function useGenerated() {
+  manualOverride = false;
+  updateSyncButton();
+  updateCommand();
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  const label = theme === "light" ? "🌙 Dark" : "☀️ Light";
+  const btn = document.getElementById("themeToggle");
+  if (btn) btn.textContent = label;
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme") || "dark";
+  const next = current === "light" ? "dark" : "light";
+  applyTheme(next);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+  const initial = saved || (prefersLight ? "light" : "dark");
+  applyTheme(initial);
+}
+
+function renderOptions() {
+  const grid = document.getElementById("optionsGrid");
+  grid.innerHTML = "";
+
+  OPTIONS.forEach((group, gi) => {
+    const groupEl = document.createElement("div");
+    groupEl.className = "option-group";
+    groupEl.id = `group-${gi}`;
+
+    const header = document.createElement("div");
+    header.className = "group-header";
+    header.textContent = group.group;
+    groupEl.appendChild(header);
+
+    const list = document.createElement("div");
+    list.className = "option-list";
+
+    group.items.forEach((item, ii) => {
+      const key = `${gi}-${ii}`;
+      if (item.type === "checkbox") {
+        const el = document.createElement("div");
+        el.className = "option-item" + (state[item.flag] ? " active" : "");
+        el.innerHTML = `
+          <div class="option-check">${state[item.flag] ? "✓" : ""}</div>
+          <div class="option-info">
+            <span class="option-flag">${item.flag}</span>
+            <span class="option-desc">${item.desc}</span>
+          </div>`;
+        el.onclick = () => {
+          state[item.flag] = !state[item.flag];
+          updateCommand();
+          renderOptions();
+        };
+        list.appendChild(el);
+      } else if (item.type === "select") {
+        const el = document.createElement("div");
+        el.className = "option-input";
+        el.innerHTML = `
+          <div class="option-info" style="flex:0 0 auto;max-width:120px">
+            <span class="option-flag" style="font-size:10px">${item.flag}</span>
+            <span class="option-desc">${item.label}</span>
+          </div>
+          <select onchange="state['${item.flag}'] = this.value; updateCommand()">
+            <option value="">—</option>
+            ${item.options.map(o => `<option value="${o}" ${state[item.flag]===o?"selected":""}>${o}</option>`).join("")}
+          </select>`;
+        list.appendChild(el);
+      } else if (item.type === "input") {
+        const el = document.createElement("div");
+        el.className = "option-input";
+        el.innerHTML = `
+          <div class="option-info" style="flex:0 0 auto;max-width:120px">
+            <span class="option-flag" style="font-size:10px">${item.flag}</span>
+            <span class="option-desc">${item.label}</span>
+          </div>
+          <input type="text" placeholder="${item.placeholder||""}" value="${state[item.flag]||""}"
+            oninput="state['${item.flag}'] = this.value; updateCommand()">`;
+        list.appendChild(el);
+      }
+    });
+
+    groupEl.appendChild(list);
+    grid.appendChild(groupEl);
+  });
+
+  OPTIONS.forEach((group, gi) => {
+    const groupEl = document.getElementById(`group-${gi}`);
+    const hasActive = group.items.some(item => {
+      const val = state[item.flag];
+      return val === true || (typeof val === "string" && val.length > 0);
+    });
+    groupEl.classList.toggle("has-active", hasActive);
+  });
+}
+
+function updateCommand() {
+  const url = document.getElementById("urlInput").value.trim() || "[URL]";
+
+  let parts = ["yt-dlp"];
+  const added = new Set();
+
+  OPTIONS.forEach(group => {
+    group.items.forEach(item => {
+      const val = state[item.flag];
+      if (added.has(item.flag)) return;
+      added.add(item.flag);
+
+      if (item.type === "checkbox" && val === true) {
+        if (item.raw) {
+          parts.push(item.flag);
+        } else {
+          parts.push(item.flag);
+        }
+      } else if ((item.type === "select" || item.type === "input") && val && val.length > 0) {
+        const needsQuote = val.includes(" ") || val.includes("+") || val.includes("[") || val.includes(",");
+        if (item.raw) {
+          parts.push(item.flag.replace(/ .*/, ""), needsQuote ? `"${val}"` : val);
+        } else {
+          parts.push(item.flag, needsQuote ? `'${val}'` : val);
+        }
+      }
+    });
+  });
+
+  parts.push(url === "[URL]" ? "[URL]" : `"${url}"`);
+
+  // Syntax highlighting
+  const cmd = parts.join(" ");
+  const output = document.getElementById("commandOutput");
+  if (!isEditingCommand && !manualOverride) {
+    output.value = cmd;
+  }
+}
+
+function applyPreset(name) {
+  const preset = PRESETS[name];
+  if (!preset) return;
+
+  const allActive = Object.entries(preset).every(([k, v]) => {
+    if (v === true) return state[k] === true;
+    if (typeof v === "string") return state[k] === v;
+    return false;
+  });
+
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active-preset"));
+
+  if (allActive) {
+    Object.keys(preset).forEach(k => delete state[k]);
+  } else {
+    Object.entries(preset).forEach(([k, v]) => {
+      if (v === true) state[k] = true;
+      else state[k] = v;
+    });
+    event.target.classList.add("active-preset");
+  }
+
+  renderOptions();
+  updateCommand();
+}
+
+function resetAll() {
+  state = {};
+  document.getElementById("urlInput").value = "";
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active-preset"));
+  renderOptions();
+  updateCommand();
+}
+
+function copyCommand() {
+  const text = document.getElementById("commandOutput").value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copyBtn");
+    btn.textContent = "COPIED!";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "COPY";
+      btn.classList.remove("copied");
+    }, 1800);
+  });
+}
+
+
+
