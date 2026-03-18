@@ -1,4 +1,5 @@
 const models = [ //モデルデータ
+    { name: "iPhone17e",      camera: "一眼", edge: "角", notch: "ノッチ", wp:"https://w.wiki/Jx4J", inch:6.1 },
     { name: "iPhone17ProMax", camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6S", inch:6.9 },
     { name: "iPhone17Pro",    camera: "三眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6S", inch:6.3 },
     { name: "iPhone17",       camera: "縦2眼", edge: "角", notch: "Dynamic Island", wp:"https://w.wiki/Hd6V", inch:6.3 },
