@@ -1,0 +1,4 @@
+Contact: mailto:security@kntnkmr.jp
+Expires: 2026-12-31T14:59:00.000Z
+Acknowledgments: https://kntnkmr.jp/fall-of-fame.html
+Preferred-Languages: ja
