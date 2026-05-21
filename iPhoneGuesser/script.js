@@ -47,7 +47,7 @@ const models = [ //モデルデータ
     { name: "iPhone5s",  camera: "一眼", edge: "角", notch: "home-button", wp:"https://w.wiki/43rV", inch:4 },
     { name: "iPhone5",   camera: "一眼", edge: "角", notch: "home-button", wp:"https://w.wiki/Hd85", inch:4 },
     { name: "iPhone4s",  camera: "一眼", edge: "角", notch: "home-button", wp:"https://w.wiki/4ZNr]", inch:3.5 },
-    { name: "iPhone4}",   camera: "一眼", edge: "角", notch: "home-button", wp:"https://w.wiki/5E8H", inch:3.5 },
+    { name: "iPhone4",   camera: "一眼", edge: "角", notch: "home-button", wp:"https://w.wiki/5E8H", inch:3.5 },
     { name: "iPhone3Gs", camera: "一眼", edge: "丸", notch: "home-button", wp:"https://w.wiki/5E8D", inch:3.5 },
     { name: "iPhone3G",  camera: "一眼", edge: "丸", notch: "home-button", wp:"https://w.wiki/Hd88", inch:3.5 },
     { name: "iPhone",    camera: "一眼", edge: "丸", notch: "home-button", wp:"https://w.wiki/4Jzj", inch:3.5 }
