@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simple Mario Clone</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        canvas { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<script>
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 400,
+    parent: 'game-container',
+    physics: {
+        default: 'arcade',
+        arcade: { gravity: { y: 600 }, debug: false }
+    },
+    scene: { preload: preload, create: create, update: update }
+};
+
+const game = new Phaser.Game(config);
+let player;
+let platforms;
+let cursors;
+let leftBtn, rightBtn, jumpBtn;
+let isLeft = false, isRight = false, isJump = false;
+
+function preload() {
+    // 仮の画像アセット（色は後で画像に差し替え可能）
+    this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
+    this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
+    this.load.image('player', 'https://labs.phaser.io/assets/sprites/phaser-dude.png');
+}
+
+function create() {
+    // 背景
+    this.add.image(400, 200, 'sky').setDisplaySize(800, 400);
+
+    // 地面と足場
+    platforms = this.physics.add.staticGroup();
+    platforms.create(400, 380, 'ground').setScale(2).refreshBody(); // 下の地面
+    platforms.create(600, 250, 'ground'); // 浮いている足場
+    platforms.create(50, 150, 'ground');
+
+    // プレイヤーの設定
+    player = this.physics.add.sprite(100, 300, 'player');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+
+    // 衝突判定
+    this.physics.add.collider(player, platforms);
+
+    // キーボード操作（PC用）
+    cursors = this.input.keyboard.createCursorKeys();
+
+    // --- スマホ用ボタン作成 ---
+    const btnStyle = { fontSize: '32px', fill: '#fff', backgroundColor: '#444', padding: 10 };
+    
+    leftBtn = this.add.text(50, 330, '◀', btnStyle).setInteractive().setScrollFactor(0);
+    rightBtn = this.add.text(150, 330, '▶', btnStyle).setInteractive().setScrollFactor(0);
+    jumpBtn = this.add.text(650, 330, 'JUMP', btnStyle).setInteractive().setScrollFactor(0);
+
+    // タッチイベントの登録
+    leftBtn.on('pointerdown', () => { isLeft = true; });
+    leftBtn.on('pointerup', () => { isLeft = false; });
+    rightBtn.on('pointerdown', () => { isRight = true; });
+    rightBtn.on('pointerup', () => { isRight = false; });
+    jumpBtn.on('pointerdown', () => { isJump = true; });
+    jumpBtn.on('pointerup', () => { isJump = false; });
+}
+
+function update() {
+    // 左右移動のロジック
+    if (cursors.left.isDown || isLeft) {
+        player.setVelocityX(-160);
+    } else if (cursors.right.isDown || isRight) {
+        player.setVelocityX(160);
+    } else {
+        player.setVelocityX(0);
+    }
+
+    // ジャンプのロジック（地面に接している時のみ）
+    if ((cursors.up.isDown || isJump) && player.body.touching.down) {
+        player.setVelocityY(-450);
+    }
+}
+</script>
+</body>
+</html>
