@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マルコフ連鎖 文章ジェネレーター</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            resize: vertical;
+            font-size: 14px;
+        }
+        .file-input-wrapper {
+            margin-top: 10px;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 120px;
+        }
+        .control-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .output-box {
+            margin-top: 25px;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 80px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>マルコフ連鎖 文章ジェネレーター</h2>
+    
+    <label for="inputText">① ベースになる文章を入力</label>
+    <textarea id="inputText" placeholder="ここに学習元のテキストを貼り付けてください。文章が長いほど、バリエーション豊かなテキストが生成されます。"></textarea>
+    
+    <div class="file-input-wrapper">
+        <input type="file" id="fileInput" accept=".txt">
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label for="stateSize">階数 (N-gram)</label>
+            <input type="number" id="stateSize" value="2" min="1" max="10">
+        </div>
+        <div class="control-group">
+            <label for="maxLength">最大文字数</label>
+            <input type="number" id="maxLength" value="300" min="10" max="2000">
+        </div>
+    </div>
+    
+    <button id="generateBtn">文章を生成する</button>
+    
+    <label>③ 生成された文章</label>
+    <div class="output-box" id="outputText">ここに結果が表示されます。</div>
+</div>
+
+<script>
+    // --- ファイル読み込みの処理 ---
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('inputText').value = event.target.result;
+        };
+        reader.readAsText(file, 'UTF-8');
+    });
+
+    // --- マルコフ連鎖モデルの作成 ---
+    function buildMarkovModel(text, stateSize) {
+        const model = {};
+        
+        // テキストが短すぎる場合は空のモデルを返す
+        if (text.length <= stateSize) return model;
+
+        for (let i = 0; i <= text.length - stateSize; i++) {
+            // 現在の状態（連続するN文字）
+            const state = text.substring(i, i + stateSize);
+            // その次に来る1文字
+            const nextChar = text.substring(i + stateSize, i + stateSize + 1);
+
+            // 次の文字がなければ（文末）スキップ
+            if (!nextChar) break;
+
+            if (!model[state]) {
+                model[state] = [];
+            }
+            // 状態に対して次に来る文字の候補を配列に追加
+            model[state].push(nextChar);
+        }
+        return model;
+    }
+
+    // --- 文章の生成 ---
+    function generateText(model, stateSize, maxLength) {
+        const keys = Object.keys(model);
+        if (keys.length === 0) return "モデルを生成するのに十分な文字数がありません。";
+
+        // ランダムに開始地点（初期状態）を選ぶ
+        let currentState = keys[Math.floor(Math.random() * keys.length)];
+        let result = currentState;
+
+        for (let i = 0; i < maxLength; i++) {
+            const possibilities = model[currentState];
+            
+            // 次の文字の候補がない場合は、そこで生成を終了する
+            if (!possibilities || possibilities.length === 0) {
+                break;
+            }
+
+            // 候補の中からランダムに1文字選択
+            const nextChar = possibilities[Math.floor(Math.random() * possibilities.length)];
+            result += nextChar;
+
+            // 状態を更新（直近のN文字を新しい状態とする）
+            currentState = result.substring(result.length - stateSize);
+        }
+
+        return result;
+    }
+
+    // --- ボタンクリック時のメイン処理 ---
+    document.getElementById('generateBtn').addEventListener('click', () => {
+        const text = document.getElementById('inputText').value.trim();
+        const stateSize = parseInt(document.getElementById('stateSize').value, 10);
+        const maxLength = parseInt(document.getElementById('maxLength').value, 10);
+
+        if (!text) {
+            alert('まずはベースになる文章を入力するか、ファイルを読み込んでください。');
+            return;
+        }
+
+        // モデル構築と文章生成を実行
+        const model = buildMarkovModel(text, stateSize);
+        const generatedResult = generateText(model, stateSize, maxLength);
+        
+        // 画面に出力
+        document.getElementById('outputText').textContent = generatedResult;
+    });
+</script>
+
+</body>
+</html>
