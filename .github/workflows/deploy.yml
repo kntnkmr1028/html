@@ -13,10 +13,10 @@ jobs:
     steps:
       # 最新のコードを取得
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       # Webサーバーの公開ディレクトリへ同期（必要に応じてパスを変更）
       - name: Copy files
-        run: 
+        run: |
           rsync -av --delete --exclude='.git' "/home/knt/html/" "/mnt/html/"
           sudo chown -R www-data:www-data "/mnt/html/"
