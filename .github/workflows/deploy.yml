@@ -13,7 +13,7 @@ jobs:
     steps:
       # 最新のコードを取得
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       # Webサーバーの公開ディレクトリへ同期（必要に応じてパスを変更）
       - name: Copy files
