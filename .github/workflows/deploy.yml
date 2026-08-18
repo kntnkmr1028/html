@@ -1,0 +1,22 @@
+name: Deploy to Raspi
+
+on:
+  push:
+    branches:
+      - main # 対象のブランチ名（必要に応じて変更）
+
+jobs:
+  deploy:
+    # 自宅のRaspi上でこのジョブを実行する指定
+    runs-on: self-hosted
+
+    steps:
+      # 最新のコードを取得
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Webサーバーの公開ディレクトリへ同期（必要に応じてパスを変更）
+      - name: Copy files
+        run: |
+          sudo rsync -rltv --delete --exclude='.git' "/home/knt/html/" "/mnt/html/"
+          sudo chown -R www-data:www-data "/mnt/html/"
